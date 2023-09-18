@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: 01-apps
+spec:
+  destination:
+    namespace: grafana
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: manifests/services/namespaces/grafana
+    repoURL: git@github.com:Crisu1710/k8s-home.git
+    targetRevision: main
+  syncPolicy:
+    #automated: {}
+    syncOptions:
+      - CreateNamespace=true

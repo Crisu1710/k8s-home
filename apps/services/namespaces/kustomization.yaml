@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+
+resources:
+  - dashboard.yaml
+  - pi-hole.yaml
+  - matrix.yaml
+  - homeassistant.yaml
+  #- nextcloud.yaml # will be replaced by OwnCloud (Infinite Scale)
+  - owncloud.yaml
+  - grafana.yaml
+  - jellyfin.yaml
+  - vaultwarden.yaml
+  - unifi.yaml
+  - paperless.yaml

@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: paperless
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: 01-apps
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:Crisu1710/k8s-home.git'
+    path: manifests/services/namespaces/paperless
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: paperless
+  syncPolicy:
+    #automated: {}
+    syncOptions:
+      - CreateNamespace=true

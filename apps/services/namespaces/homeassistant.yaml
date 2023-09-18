@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homeassistant
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: 01-apps
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:Crisu1710/k8s-home.git'
+    path: manifests/services/namespaces/homeassistant
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: homeassistant
+  syncPolicy:
+    #automated: {}
+    syncOptions:
+      - CreateNamespace=true
