@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: owncloud-redis
+  namespace: owncloud
+spec:
+  replicas: 1
+  serviceName: owncloud-redis-hs
+  selector:
+    matchLabels:
+      app: owncloud-redis
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: owncloud-redis
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+              weight: 100
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - owncloud
+                topologyKey: topology.kubernetes.io/hostname
+              weight: 100
+      volumes:
+        - name: vol
+          persistentVolumeClaim:
+            claimName: owncloud-redis
+      containers:
+        - name: redis
+          image: docker.io/library/redis:7
+          volumeMounts:
+            - name: vol
+              mountPath: /data
+          ports:
+            - containerPort: 6379

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultwarden-deploy
+  namespace: vaultwarden
+  labels:
+    environment: extern
+    app: vaultwarden
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vaultwarden
+  template:
+    metadata:
+      labels:
+        app: vaultwarden
+    spec:
+       volumes:
+         - name: vaultwarden
+           persistentVolumeClaim:
+             claimName: vaultwarden-pvc
+       containers:
+        - name: vaultwarden
+          image: ghcr.io/dani-garcia/vaultwarden:1.28.0
+          volumeMounts:
+            - mountPath: /data/
+              name: vaultwarden
+          ports:
+            - containerPort: 80
+              name: web
+          env:
+            - name: YUBICO_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: yubico-client-id
+                  name: yubico-auth
+            - name: YUBICO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: yubico-secret-key
+                  name: yubico-auth
+          resources:
+            requests:
+              memory: "10Mi"
+              cpu: "5m"
+            limits:
+              cpu: "30m"

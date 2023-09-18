@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jellyfin-deploy
+  namespace: jellyfin
+  labels:
+    environment: extern
+    app: jellyfin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8096"
+    spec:
+      volumes:
+      - name: vol
+        persistentVolumeClaim:
+          claimName: jellyfin-conf-pvc
+      #- name: media
+      containers:
+      - name: jellyfin
+        image: jellyfin/jellyfin
+        volumeMounts:
+          - name: vol
+            mountPath: /config
+          #- name: vol
+          #  mountPath: /cache
+          #- name: media
+          #  mountPath: /media
+        resources:
+            requests:
+              memory: "100Mi"
+              cpu: "1m"
+            limits:
+              memory: "200Mi"
+              cpu: "4m"

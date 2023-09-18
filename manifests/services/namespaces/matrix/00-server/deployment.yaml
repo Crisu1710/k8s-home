@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-deploy
+  namespace: matrix
+  labels:
+    environment: extern
+    app: matrix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matrix
+  template:
+    metadata:
+      labels:
+        app: matrix
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9092"
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+              weight: 100
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - matrix-db
+                topologyKey: topology.kubernetes.io/hostname
+              weight: 100
+      volumes:
+        - name: vol
+          persistentVolumeClaim:
+            claimName: matrix-pvc
+      containers:
+        - name: matrix
+          image: ghcr.io/matrix-org/synapse:v1.80.0
+          volumeMounts:
+            - name: vol
+              mountPath: /data
+          ports:
+            - containerPort: 8448
+              name: web
+          env:
+            - name: SYNAPSE_SERVER_NAME
+              value: "matrix.domain.tld"
+            - name: SYNAPSE_REPORT_STATS
+              value: "no"
+          resources:
+            requests:
+              memory: "140Mi"
+              cpu: "15m"
+            limits:
+              memory: "170Mi"
+              #cpu: "25m"

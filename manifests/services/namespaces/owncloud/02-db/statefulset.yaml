@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: owncloud-db
+  namespace: owncloud
+spec:
+  replicas: 1
+  serviceName: owncloud-db-hs
+  selector:
+    matchLabels:
+      app: owncloud-db
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: owncloud-db
+    spec:
+      volumes:
+        - name: vol
+          persistentVolumeClaim:
+            claimName: owncloud-db
+        - name: backup
+          persistentVolumeClaim:
+            claimName: owncloud-db-backup
+      containers:
+        - name: postgres
+          image: postgres:13.4
+#          securityContext:
+#            runAsUser: 999
+#          args:
+#            - pg_resetwal
+#            - /var/lib/postgresql/data
+          volumeMounts:
+            - name: vol
+              mountPath: /var/lib/postgresql/data
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: owncloud
+            - name: POSTGRES_USER
+              value: owncloud
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: db-password
+                  name: passwd
+        - name: postgres-backup
+          image: ghcr.io/crisu1710/docker-pg_dump:0.1.0
+          args: ["dump-cron"]
+          volumeMounts:
+            - name: backup
+              mountPath: /dump
+          env:
+            - name: PGUSER
+              value: "postgres"
+            - name: PGHOST
+              value: "localhost"
+            - name: PGDB
+              value: "synapse"
+            - name: CRON_SCHEDULE
+              value: "0 1 * * *"
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: db-password
+                  name: passwd

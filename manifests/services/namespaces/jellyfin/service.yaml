@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyfin-service
+  namespace: jellyfin
+  labels:
+    environment: extern
+    app: jellyfin
+spec:
+  selector:
+    app: jellyfin
+  type: ClusterIP
+  ports:
+    - targetPort: 8096
+      port: 8096
+      name: web-ui

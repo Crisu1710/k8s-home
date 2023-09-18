@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: owncloud-db-hs
+  namespace: owncloud
+  labels:
+    environment: intern
+    app: owncloud-db
+spec:
+  selector:
+    app: owncloud-db
+  type: ClusterIP
+  ports:
+    - targetPort: 5432
+      port: 5432

@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: owncloud
+  namespace: owncloud
+  labels:
+    environment: extern
+    app: owncloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: owncloud
+  template:
+    metadata:
+      labels:
+        app: owncloud
+      annotations:
+        linkerd.io/inject: disabled
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+              weight: 100
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - owncloud-db
+                topologyKey: topology.kubernetes.io/hostname
+              weight: 100
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: owncloud-data
+      containers:
+        - name: owncloud
+          image: owncloud/server:10.12
+          volumeMounts:
+            - name: data
+              mountPath: /mnt/data
+          ports:
+            - containerPort: 8080
+              name: web
+          env:
+            - name: OWNCLOUD_DOMAIN
+              value: "ocloud.domain.tld"
+            - name: OWNCLOUD_TRUSTED_DOMAINS
+              value: "ocloud.domain.tld"
+            - name: OWNCLOUD_DB_TYPE
+              value: pgsql
+            - name: OWNCLOUD_DB_NAME
+              value: owncloud
+            - name: OWNCLOUD_DB_USERNAME
+              value: owncloud
+            - name: OWNCLOUD_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: db-password
+                  name: passwd
+            - name: OWNCLOUD_DB_HOST
+              value: owncloud-db-0.owncloud-db-hs
+            - name: OWNCLOUD_ADMIN_USERNAME
+              value: admin
+            - name: OWNCLOUD_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user-password
+                  name: passwd
+            - name: OWNCLOUD_REDIS_ENABLED
+              value: "true"
+            - name: OWNCLOUD_REDIS_HOST
+              value: owncloud-redis-0.owncloud-redis-hs
+          resources:
+            requests:
+              memory: "170Mi"
+              cpu: "20m"
+            #limits:
+            #  memory: "300Mi"
+            #  cpu: "30m"

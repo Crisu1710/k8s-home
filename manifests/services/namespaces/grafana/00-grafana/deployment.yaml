@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: grafana
+  labels:
+    environment: extern
+    app: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+              weight: 100
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - grafana-db
+                topologyKey: topology.kubernetes.io/hostname
+              weight: 100
+      volumes:
+        - name: grafana-ini
+          configMap:
+            name: grafana-ini
+        - name: novatec-service-dependency-graph-panel
+          emptyDir: {}
+      containers:
+        - name: grafana
+          image: docker.io/grafana/grafana:9.4.7
+          env:
+            - name: GRAFANA_DB_PASSWD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-passwd
+            - name: GF_INSTALL_PLUGINS
+              value: btplc-alarm-box-panel,btplc-status-dot-panel,btplc-trend-box-panel,btplc-trend-box-panel,grafana-clock-panel,grafana-piechart-panel,grafana-worldmap-panel,magnesium-wordcloud-panel,michaeldmoore-annunciator-panel,michaeldmoore-multistat-panel,petrslavotinek-carpetplot-panel,ryantxu-ajax-panel,vonage-status-panel,grafana-oncall-app
+          volumeMounts:
+            - mountPath: /etc/grafana/
+              name: grafana-ini
+            - mountPath: /var/lib/grafana/plugins/novatec-sdg-panel
+              name: novatec-service-dependency-graph-panel
+          ports:
+            - containerPort: 3000
+              name: web
+          resources:
+            requests:
+              memory: "100Mi"
+              cpu: "15m"
+            limits:
+              memory: "150Mi"
+              cpu: "50m"
+      initContainers:
+        - name: plugin-downloader
+          image: grafana/grafana:9.4.7
+          command: ['sh', '-c', "cd /tmp/plugins && wget -c https://github.com/NovatecConsulting/novatec-service-dependency-graph-panel/releases/download/v4.0.2/novatec-sdg-panel.zip && unzip novatec-sdg-panel.zip && mv novatec-sdg-panel/* . && rm -rf novatec-sdg-panel novatec-sdg-panel.zip"]
+          volumeMounts:
+            - mountPath: /tmp/plugins/
+              name: novatec-service-dependency-graph-panel

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homeassistant-deploy
+  namespace: homeassistant
+  labels:
+    environment: extern
+    app: homeassistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homeassistant
+  template:
+    metadata:
+      labels:
+        app: homeassistant
+    spec:
+      hostNetwork: true
+      volumes:
+        - name: vol
+          persistentVolumeClaim:
+            claimName: homeassistant-pvc
+      containers:
+        - name: homeassistant
+          image: ghcr.io/home-assistant/home-assistant:2023.3
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: vol
+              mountPath: /config
+          ports:
+            - containerPort: 8123
+              name: websecure
+          resources:
+            requests:
+              memory: "260Mi"
+              cpu: "5m"
+            limits:
+              memory: "300Mi"
+              #cpu: "8m"

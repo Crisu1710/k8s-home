@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synapse-admin-deploy
+  namespace: matrix
+  labels:
+    environment: intern
+    app: synapse-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: synapse-admin
+  template:
+    metadata:
+      labels:
+        app: synapse-admin
+    spec:
+      containers:
+        - name: synapse-admin
+          image: awesometechnologies/synapse-admin
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "3Mi"
+              cpu: "1m"
+            limits:
+              memory: "10Mi"
+              cpu: "1m"

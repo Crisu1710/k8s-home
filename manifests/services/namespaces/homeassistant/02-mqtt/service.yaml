@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.213.101
+  name: mosquitto-service
+  namespace: homeassistant
+  labels:
+    environment: extern
+    app: mosquitto
+spec:
+  externalTrafficPolicy: Local
+  selector:
+    app: mosquitto
+  type: LoadBalancer
+  ports:
+    - targetPort: mqtt
+      port: 1883
+      name: mqtt

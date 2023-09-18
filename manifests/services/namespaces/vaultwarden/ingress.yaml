@@ -1,0 +1,27 @@
+ apiVersion: networking.k8s.io/v1
+ kind: Ingress
+ metadata:
+  name: vaultwarden-ingress
+  namespace: vaultwarden
+  labels:
+    environment: intern
+    app: vaultwarden
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 192.168.0.0/16
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "form-textbox-password"
+ spec:
+   tls:
+     - hosts:
+         - passwd.domain.tld
+   rules:
+     - host: passwd.domain.tld
+       http:
+         paths:
+           - pathType: Prefix
+             path: /
+             backend:
+               service:
+                 name: vaultwarden-service
+                 port:
+                   number: 8987

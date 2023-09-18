@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mosquitto
+    environment: extern
+  name: mosquitto-deploy
+  namespace: homeassistant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mosquitto
+  template:
+    metadata:
+      labels:
+        app: mosquitto
+    spec:
+      containers:
+        - image: eclipse-mosquitto:2.0.15
+          imagePullPolicy: Always
+          name: mosquitto
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /mosquitto/config/
+              name: conf
+            - mountPath: /mosquitto/passwd/password.txt
+              subPath: password.txt
+              name: passwd
+          ports:
+            - containerPort: 1883
+              name: mqtt
+              hostPort: 1883
+          resources:
+            requests:
+              memory: "2Mi"
+              cpu: "1m"
+            limits:
+              memory: "3Mi"
+              cpu: "1m"
+      hostNetwork: false
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: conf
+          name: conf
+        - secret:
+            secretName: mqtt
+          name: passwd

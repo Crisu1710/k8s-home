@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mautrix-whatsapp-service
+  namespace: matrix
+  labels:
+    environment: intern
+    app: mautrix-whatsapp
+spec:
+  selector:
+    app: mautrix-whatsapp
+  type: ClusterIP
+  ports:
+    - targetPort: 29318
+      port: 29318

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deconz-deploy
+  namespace: homeassistant
+  labels:
+    environment: extern
+    app: deconz
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deconz
+  template:
+    metadata:
+      labels:
+        app: deconz
+    spec:
+      hostNetwork: true
+      volumes:
+        - name: zigbeehat
+          hostPath:
+            path: /dev/ttyAMA0
+        - name: vol
+          persistentVolumeClaim:
+            claimName: deconz-pvc
+      nodeSelector:
+        kubernetes.io/hostname: k3sw102
+      containers:
+        - name: deconz
+          securityContext:
+            privileged: true
+          image: ghcr.io/deconz-community/deconz-docker:2.21.01
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: vol
+              mountPath: /opt/deCONZ
+            - name: vol
+              mountPath: /root/.local/share/dresden-elektronik/deCONZ
+            - mountPath: /dev/ttyAMA0
+              name: zigbeehat
+          env:
+            - name: DECONZ_WEB_PORT
+              value: "80"
+            - name: DECONZ_WS_PORT
+              value: "443"
+            - name: DEBUG_INFO
+              value: "1"
+            - name: DECONZ_VNC_MODE
+              value: "1"
+            - name: DECONZ_VNC_PORT
+              value: "5900"
+            - name: DECONZ_VNC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: passwd
+          resources:
+            requests:
+              memory: "120Mi"
+              cpu: "30m"
+            limits:
+              memory: "150Mi"
+              cpu: "40m"

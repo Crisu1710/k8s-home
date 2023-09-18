@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coturn
+  #namespace: turn
+  namespace: cert-manager
+spec:
+  selector:
+    matchLabels:
+      app: coturn
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: coturn
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9641"
+    spec:
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/hostname: k3sw101
+      containers:
+        - image: ghcr.io/coturn/coturn:4.6.1
+          name: turn
+          env:
+            - name: DETECT_EXTERNAL_IP
+              value: yes
+            - name: DETECT_RELAY_IP
+              value: yes
+          volumeMounts:
+            - name: cert
+              mountPath: /var/run/secret
+              readOnly: true
+            - name: conf
+              mountPath: /etc/coturn/turnserver.conf
+              subPath: turnserver.conf
+      volumes:
+        - name: cert
+          secret:
+            secretName: domain-tld-cert
+        - name: conf
+          secret:
+            secretName: coturn-conf

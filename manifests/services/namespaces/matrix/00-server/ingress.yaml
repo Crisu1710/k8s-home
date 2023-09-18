@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: matrix-ingress
+  namespace: matrix
+  labels:
+    environment: extern
+    app: matrix
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 400m
+    hajimari.io/enable: "flase"
+spec:
+  tls:
+    - hosts:
+        - matrix.domain.tld
+  rules:
+    - host: "matrix.domain.tld"
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: matrix-service
+                port:
+                  number: 8448
+          - pathType: Prefix
+            path: /.well-known
+            backend:
+              service:
+                name: delegation-service
+                port:
+                  number: 8449

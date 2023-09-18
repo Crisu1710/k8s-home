@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.213.101
+  name: deconz-service
+  namespace: homeassistant
+  labels:
+    environment: extern
+    app: deconz
+spec:
+  selector:
+    app: deconz
+  type: ClusterIP
+  ports:
+    - targetPort: http
+      port: 80
+      name: http
+    - targetPort: https
+      port: 443
+      name: https

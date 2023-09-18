@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole-deploy
+  namespace: pihole
+  labels:
+    environment: extern
+    app: pihole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      volumes:
+        - name: pihole
+          persistentVolumeClaim:
+            claimName: pihole-pvc
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
+      containers:
+        - name: pihole
+          image: pihole/pihole:2023.03.1
+          env:
+            - name: WEB_PORT
+              value: "8333"
+            - name: TZ
+              value: "Europe/Berlin"
+          volumeMounts:
+            - name: pihole
+              mountPath: /etc/pihole
+          ports:
+            - containerPort: 53
+              name: dns
+              protocol: UDP
+            - containerPort: 53
+              name: dns-tcp
+              protocol: TCP
+            - containerPort: 8333
+              name: web
+          resources:
+            requests:
+              memory: "30Mi"
+              cpu: "40m"
+            #limits:
+            #  memory: "150Mi"
+            #  cpu: "70m"
+

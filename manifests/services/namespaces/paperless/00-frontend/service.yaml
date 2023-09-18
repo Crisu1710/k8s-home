@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: paperless-service
+  namespace: paperless
+  labels:
+    environment: extern
+    app: paperless
+spec:
+  selector:
+    app: paperless
+  type: ClusterIP
+  ports:
+    - targetPort: 8000
+      port: 8000
+      name: web

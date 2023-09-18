@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nextcloud-db-statefulset
+  namespace: nextcloud
+spec:
+  replicas: 1
+  serviceName: nextcloud-db-hs
+  selector:
+    matchLabels:
+      app: nextcloud-db
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: nextcloud-db
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+              weight: 100
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - nextcloud
+                topologyKey: topology.kubernetes.io/hostname
+              weight: 100
+      volumes:
+        - name: vol
+          persistentVolumeClaim:
+            claimName: nextcloud-db-pvc
+        - name: backup
+          persistentVolumeClaim:
+            claimName: nextcloud-db-backup-pvc
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          volumeMounts:
+            - name: vol
+              mountPath: /var/lib/mysql
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-passwd
+        - name: mysql-backup
+          image: fradelg/mysql-cron-backup
+          volumeMounts:
+            - name: backup
+              mountPath: /backup
+          env:
+            - name: MYSQL_HOST
+              value: "localhost"
+            - name: MYSQL_USER
+              value: "root"
+            - name: CRON_TIME
+              value: "0 1 * * *"
+            - name: MYSQL_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-passwd

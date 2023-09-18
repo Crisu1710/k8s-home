@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: owncloud-redis-hs
+  namespace: owncloud
+  labels:
+    environment: intern
+    app: owncloud-redis
+spec:
+  selector:
+    app: owncloud-redis
+  type: ClusterIP
+  ports:
+    - targetPort: 6379
+      port: 6379

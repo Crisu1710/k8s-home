@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: paperless-ingress
+  namespace: paperless
+  labels:
+    environment: extern
+    app.kubernetes.io/instance: paperless
+    app: paperless
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 192.168.0.0/16
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 400m
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "note-off"
+spec:
+  tls:
+    - hosts:
+        - paperless.domain.tld
+  rules:
+    - host: paperless.domain.tld
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: paperless-service
+                port:
+                  number: 8000

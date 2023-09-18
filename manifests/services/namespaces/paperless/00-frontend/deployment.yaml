@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paperless-deploy
+  namespace: paperless
+  labels:
+    environment: extern
+    app: paperless
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: paperless
+  template:
+    metadata:
+      labels:
+        app: paperless
+      annotations:
+        linkerd.io/inject: disabled
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+              weight: 100
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - paperless-redis
+                topologyKey: topology.kubernetes.io/hostname
+              weight: 100
+      volumes:
+        - name: conf
+          persistentVolumeClaim:
+            claimName: paperless-conf-pvc
+      containers:
+        - name: paperless
+          image: ghcr.io/paperless-ngx/paperless-ngx:1.13.0
+          volumeMounts:
+            - name: conf
+              mountPath: /config
+          ports:
+            - containerPort: 8000
+              name: web
+          env:
+            - name: PAPERLESS_ADMIN_USER
+              value: "admin"
+            - name: PAPERLESS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-passwd
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-passwd
+            - name: PAPERLESS_DBPASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-passwd
+            - name: PAPERLESS_REDIS
+              value: redis://paperless-redis-statefulset-0.paperless-redis-hs:6379
+            - name: PAPERLESS_DBHOST
+              value: paperless-db-statefulset-0.paperless-db-hs
+            - name: PAPERLESS_URL
+              value: https://paperless.domain.tld
+          resources:
+            requests:
+              memory: "170Mi"
+              cpu: "20m"
+            #limits:
+            #  memory: "300Mi"
+            #  cpu: "30m"

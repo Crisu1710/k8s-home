@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: owncloud
+
+resources:
+  - externalsecret.yaml
+  - 00-frontend
+  - 01-redis
+  - 02-db

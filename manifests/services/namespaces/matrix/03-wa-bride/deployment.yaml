@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mautrix-whatsapp-deploy
+  namespace: matrix
+  labels:
+    environment: intern
+    app: mautrix-whatsapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mautrix-whatsapp
+  template:
+    metadata:
+      labels:
+        app: mautrix-whatsapp
+    spec:
+      volumes:
+        - name: vol
+          persistentVolumeClaim:
+            claimName: NO_NAME
+      containers:
+        - name: mautrix-whatsapp
+          image: dock.mau.dev/tulir/mautrix-whatsapp:latest
+          volumeMounts:
+            - name: vol
+              mountPath: /data
+          ports:
+            - containerPort: 29318

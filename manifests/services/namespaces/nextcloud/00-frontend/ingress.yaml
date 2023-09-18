@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextcloud-ingress
+  namespace: nextcloud
+  labels:
+    environment: extern
+    app.kubernetes.io/instance: nextcloud
+    app: nextcloud
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 192.168.0.0/16
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 400m
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "cloud"
+spec:
+  tls:
+    - hosts:
+        - cloud.domain.tld
+  rules:
+    - host: cloud.domain.tld
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: nextcloud-service
+                port:
+                  number: 8088

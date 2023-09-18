@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: paperless-db-statefulset
+  namespace: paperless
+spec:
+  replicas: 1
+  serviceName: paperless-db-hs
+  selector:
+    matchLabels:
+      app: paperless-db
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: paperless-db
+    spec:
+      volumes:
+        - name: vol
+          persistentVolumeClaim:
+            claimName: paperless-db-pvc
+        - name: backup
+          persistentVolumeClaim:
+            claimName: paperless-db-backup-pvc
+      containers:
+        - name: postgres
+          image: postgres:13.4
+#          securityContext:
+#            runAsUser: 999
+#          args:
+#            - pg_resetwal
+#            - /var/lib/postgresql/data
+          volumeMounts:
+            - name: vol
+              mountPath: /var/lib/postgresql/data
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: paperless
+            - name: POSTGRES_USER
+              value: paperless
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-passwd
+        - name: postgres-backup
+          image: ghcr.io/crisu1710/docker-pg_dump:0.1.0
+          args: ["dump-cron"]
+          volumeMounts:
+            - name: backup
+              mountPath: /dump
+          env:
+            - name: PGUSER
+              value: "postgres"
+            - name: PGHOST
+              value: "localhost"
+            - name: PGDB
+              value: "paperless"
+            - name: CRON_SCHEDULE
+              value: "0 1 * * *"
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: db-passwd

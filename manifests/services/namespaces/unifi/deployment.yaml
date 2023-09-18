@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unifi-deploy
+  namespace: unifi
+  labels:
+    environment: intern
+    app: unifi
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: unifi
+  template:
+    metadata:
+      labels:
+        app: unifi
+    spec:
+      hostNetwork: true
+      containers:
+        - name: unifi
+          image: linuxserver/unifi-controller:7.3.83
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "5m"
+            limits:
+              memory: "500Mi"
+              cpu: "9m"
