@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+
+resources:
+  #- external-secrets # not in use. see vault
+  - mon
+  #- storage/mayastor/mayastor.yaml # too much CPU usage for Pi4
+  #- storage/nfs # nfs server not working on talos
+  - proxy
+  - storage/local
+  #- vault # to overkill for @home
+  #- storage/s3/minio.yaml # not in use atm

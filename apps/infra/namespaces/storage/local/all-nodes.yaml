@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: local-all
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: 00-infra
+    app.kubernetes.io/ns: storage
+spec:
+  destination:
+    namespace: storage
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    helm:
+      parameters:
+      - name: setPVOwnerRef
+        value: "true"
+      - name: classes[0].name
+        value: local-all
+      - name: classes[0].hostDir
+        value: /var/local/storage
+      - name: mountDevVolume
+        value: "false"
+      - name: classes[0].storageClass
+        value: "local-all"
+    path: helm/provisioner
+    repoURL: https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner.git
+    targetRevision: HEAD
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

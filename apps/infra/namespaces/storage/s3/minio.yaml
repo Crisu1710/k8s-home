@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minio-operator
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: 00-infra
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:Crisu1710/k8s-home.git'
+    path: manifests/infra/storage/minio/operator
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: minio
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+# ---
+# apiVersion: argoproj.io/v1alpha1
+# kind: Application
+# metadata:
+#   name: minio-tenant
+#   namespace: argocd
+#   labels:
+#     app.kubernetes.io/instance: 00-infra
+# spec:
+#   project: default
+#   source:
+#     repoURL: 'git@github.com:Crisu1710/k8s-home.git'
+#     path: manifests/infra/storage/minio/tenant
+#     targetRevision: main
+#   destination:
+#     server: 'https://kubernetes.default.svc'
+#     namespace: minio
+#   syncPolicy:
+#     syncOptions:
+#       - CreateNamespace=true

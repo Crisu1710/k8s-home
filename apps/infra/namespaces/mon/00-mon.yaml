@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mon
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: 00-infra
+spec:
+  project: default
+  source:
+    repoURL: 'git@github.com:Crisu1710/k8s-home.git'
+    path: manifests/infra/mon
+    targetRevision: main
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: storage
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
