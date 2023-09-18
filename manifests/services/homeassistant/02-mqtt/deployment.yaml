@@ -17,7 +17,7 @@ spec:
         app: mosquitto
     spec:
       containers:
-        - image: eclipse-mosquitto:2.0.15
+        - image: eclipse-mosquitto:2.0.17
           imagePullPolicy: Always
           name: mosquitto
           terminationMessagePath: /dev/termination-log
