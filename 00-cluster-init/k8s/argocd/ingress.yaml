@@ -1,0 +1,62 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-webhook
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    #kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "autorenew"
+  namespace: argocd
+  labels:
+    environment: internal
+    app: argocd
+spec:
+  tls:
+    - hosts:
+        - argocd.domain.tld
+      secretName: argocd-secret
+  rules:
+    - host: argocd.domain.tld
+      http:
+        paths:
+          - pathType: Prefix
+            path: /api/webhook
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  name: https
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/whitelist-source-range: 192.168.0.0/16
+    cert-manager.io/cluster-issuer: letsencrypt
+    #kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    hajimari.io/enable: "true"
+    hajimari.io/icon: "autorenew"
+  namespace: argocd
+  labels:
+    environment: internal
+    app: argocd
+spec:
+  tls:
+    - hosts:
+        - argocd.domain.tld
+      secretName: argocd-secret
+  rules:
+    - host: argocd.domain.tld
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  name: https
