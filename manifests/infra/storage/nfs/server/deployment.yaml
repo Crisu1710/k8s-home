@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+  namespace: storage
+spec:
+  selector:
+    matchLabels:
+      app: nfs-server
+  template:
+    metadata:
+      labels:
+        app: nfs-server
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-m103
+      containers:
+      - name: nfs-server
+        image: registry.k8s.io/volume-nfs:0.8
+        securityContext:
+          privileged: true
+        ports:
+        - name: nfs
+          containerPort: 2049
+        - name: mountd
+          containerPort: 20048
+        - name: rpcbind
+          containerPort: 111
+        volumeMounts:
+        - name: storage
+          mountPath: /exports
+      volumes:
+      - name: storage
+        hostPath:
+          path: /var/local/nfs-storage # store all data in "/mnt/data/storage" directory of the node where it is running
+          type: DirectoryOrCreate # if the directory does not exist then create it

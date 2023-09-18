@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: mon
+
+resources:
+  - statefulset.yaml
+  - service.yaml
+  - rbac.yaml
+
+configMapGenerator:
+  - name: prometheus
+    files:
+      - prometheus.yml
+  - name: rules
+    files:
+      - rules/cadvisor.rules.yml
+      - rules/default.rules.yml
+      - rules/k8s.rules.yml
+      - rules/prom.rules.yml
+      - rules/traefik.rules.yml.prev

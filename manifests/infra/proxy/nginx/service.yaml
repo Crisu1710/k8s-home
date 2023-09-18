@@ -1,0 +1,4 @@
+### MetalLB will always use this IP for the ingress nginx loadbalances service
+- op: add
+  path: /metadata/annotations/metallb.universe.tf~1loadBalancerIPs
+  value: 192.168.213.110

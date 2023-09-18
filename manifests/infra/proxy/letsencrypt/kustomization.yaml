@@ -1,0 +1,12 @@
+---
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+#namespace: cert-manager
+generatorOptions:
+  disableNameSuffixHash: true
+resources:
+  - https://github.com/cert-manager/cert-manager/releases/download/v1.12.4/cert-manager.yaml
+  #- externalsecret.yaml
+  - clusterissuer.yaml
+  - certificate.yaml
+  - role.yaml

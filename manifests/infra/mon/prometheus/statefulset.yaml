@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus
+  namespace: mon
+spec:
+  replicas: 1
+  serviceName: prometheus-hs
+  selector:
+    matchLabels:
+      app: prometheus
+  podManagementPolicy: Parallel
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: monitoring
+      containers:
+        - name: prometheus
+          image: quay.io/prometheus/prometheus:v2.46.0
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--web.enable-admin-api"
+            - "--web.listen-address=:9090"
+            - "--web.enable-lifecycle"
+          ports:
+            - name: prometheus
+              containerPort: 9090
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/prometheus/
+            - name: rules-volume
+              mountPath: /etc/prometheus/rules/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: prometheus
+        - name: rules-volume
+          configMap:
+            name: rules

@@ -1,0 +1,15 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+namespace: ingress-nginx
+resources:
+- deployment.yaml
+- service.yaml
+
+
+configMapGenerator:
+  - name: nginx-error
+    files:
+      - default.conf
+  - name: error-html
+    files:
+      - error-page.html

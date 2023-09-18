@@ -1,0 +1,17 @@
+### set 00-letsencrypt as default certmanager
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value: --default-ssl-certificate=cert-manager/domain-tld-cert
+
+### needed for the custom-default-backend
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value: --default-backend-service=ingress-nginx/nginx-errors
+
+### enable Prometheus metrics for ingress nginx
+- op: add
+  path: /spec/template/metadata/annotations
+  value: 
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10254"
+    prometheus.io/path: "/metrics"

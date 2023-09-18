@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snmp
+  namespace: mon
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snmp
+  template:
+    metadata:
+      labels:
+        app: snmp
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9116"
+    spec:
+      hostNetwork: true
+      containers:
+        - name: snmp
+          image: ricardbejarano/snmp_exporter
+          ports:
+            - containerPort: 9116

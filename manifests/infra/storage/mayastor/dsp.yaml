@@ -1,0 +1,8 @@
+apiVersion: "openebs.io/v1alpha1"
+kind: DiskPool
+metadata:
+  name: pool-on-node-1
+  namespace: storage
+spec:
+  node: k8s-m103
+  disks: ["/dev/sda"] #/dev/disk/by-id/ata-TS240GSSD220S_371633D3E43936210022

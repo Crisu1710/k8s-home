@@ -1,0 +1,27 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  namespace: cert-manager
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: 'm2rs@posteo.de'
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+    - dns01:
+        webhook:
+          groupName: 'acme.domain.tld'
+          solverName: ovh
+          config:
+            endpoint: ovh-eu
+            applicationKeyRef:
+              key: applicationKey
+              name: ovh-credentials
+            applicationSecretRef:
+              key: applicationSecret
+              name: ovh-credentials
+            consumerKeyRef:
+              key: consumerKey
+              name: ovh-credentials
