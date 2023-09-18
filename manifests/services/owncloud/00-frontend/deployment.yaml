@@ -45,7 +45,7 @@ spec:
             claimName: owncloud-data
       containers:
         - name: owncloud
-          image: owncloud/server:10.12
+          image: owncloud/server:10.13
           volumeMounts:
             - name: data
               mountPath: /mnt/data
