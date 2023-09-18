@@ -23,7 +23,7 @@ spec:
             claimName: homeassistant-pvc
       containers:
         - name: homeassistant
-          image: ghcr.io/home-assistant/home-assistant:2023.3
+          image: ghcr.io/home-assistant/home-assistant:2023.9
           imagePullPolicy: Always
           volumeMounts:
             - name: vol
