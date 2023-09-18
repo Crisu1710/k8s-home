@@ -60,8 +60,8 @@ locals {
   ]
   worker_nodes = [
     for i in range(var.worker_count) : {
-      name    = "home-k8w-pi10${i}"
-      address = "192.168.213.${20 + i}"
+      name    = "home-k8w-pi10${1 + i}"
+      address = "192.168.213.${21 + i}"
     }
   ]
   common_machine_config = {
