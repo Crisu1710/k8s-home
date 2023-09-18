@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: unifi
+  name: pi-hole
   namespace: argocd
   labels:
     app.kubernetes.io/instance: 01-apps
@@ -9,11 +9,12 @@ spec:
   project: default
   source:
     repoURL: 'git@github.com:Crisu1710/k8s-home.git'
-    path: manifests/services/namespaces/unifi
+    path: manifests/services/pi-hole
     targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: unifi
+    namespace: pi-hole
   syncPolicy:
+    #automated: {}
     syncOptions:
       - CreateNamespace=true

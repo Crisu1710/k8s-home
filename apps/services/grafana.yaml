@@ -1,19 +1,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: vaultwarden
+  name: grafana
   namespace: argocd
   labels:
     app.kubernetes.io/instance: 01-apps
 spec:
+  destination:
+    namespace: grafana
+    server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: 'git@github.com:Crisu1710/k8s-home.git'
-    path: manifests/services/namespaces/vaultwarden
+    path: manifests/services/grafana
+    repoURL: git@github.com:Crisu1710/k8s-home.git
     targetRevision: main
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: vaultwarden
   syncPolicy:
     #automated: {}
     syncOptions:

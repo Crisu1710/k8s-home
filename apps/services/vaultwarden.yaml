@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: homeassistant
+  name: vaultwarden
   namespace: argocd
   labels:
     app.kubernetes.io/instance: 01-apps
@@ -9,11 +9,11 @@ spec:
   project: default
   source:
     repoURL: 'git@github.com:Crisu1710/k8s-home.git'
-    path: manifests/services/namespaces/homeassistant
+    path: manifests/services/vaultwarden
     targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: homeassistant
+    namespace: vaultwarden
   syncPolicy:
     #automated: {}
     syncOptions:

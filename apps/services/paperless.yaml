@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: 'git@github.com:Crisu1710/k8s-home.git'
-    path: manifests/services/namespaces/paperless
+    path: manifests/services/paperless
     targetRevision: main
   destination:
     server: 'https://kubernetes.default.svc'
