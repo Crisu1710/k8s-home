@@ -48,7 +48,7 @@ spec:
           emptyDir: {}
       containers:
         - name: grafana
-          image: docker.io/grafana/grafana:10.1.1
+          image: docker.io/grafana/grafana:10.1.2
           env:
             - name: GRAFANA_DB_PASSWD
               valueFrom:
