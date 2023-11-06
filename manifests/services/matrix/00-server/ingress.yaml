@@ -8,7 +8,7 @@ metadata:
     app: matrix
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 400m
-    hajimari.io/enable: "flase"
+    hajimari.io/enable: "false"
 spec:
   tls:
     - hosts:
