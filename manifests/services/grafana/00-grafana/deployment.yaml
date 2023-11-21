@@ -74,7 +74,7 @@ spec:
               cpu: "50m"
       initContainers:
         - name: plugin-downloader
-          image: grafana/grafana:10.2.0
+          image: grafana/grafana:10.2.2
           command: ['sh', '-c', "cd /tmp/plugins && wget -c https://github.com/NovatecConsulting/novatec-service-dependency-graph-panel/releases/download/v4.0.2/novatec-sdg-panel.zip && unzip novatec-sdg-panel.zip && mv novatec-sdg-panel/* . && rm -rf novatec-sdg-panel novatec-sdg-panel.zip"]
           volumeMounts:
             - mountPath: /tmp/plugins/
