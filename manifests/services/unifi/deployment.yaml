@@ -19,7 +19,7 @@ spec:
       hostNetwork: true
       containers:
         - name: unifi
-          image: linuxserver/unifi-controller:8.0.7
+          image: linuxserver/unifi-controller:8.0.24
           resources:
             requests:
               memory: "300Mi"
