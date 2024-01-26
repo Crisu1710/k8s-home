@@ -46,7 +46,7 @@ spec:
             claimName: matrix-pvc
       containers:
         - name: matrix
-          image: ghcr.io/matrix-org/synapse:v1.97.0
+          image: ghcr.io/matrix-org/synapse:v1.98.0
           volumeMounts:
             - name: vol
               mountPath: /data
