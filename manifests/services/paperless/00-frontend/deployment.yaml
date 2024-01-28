@@ -45,7 +45,7 @@ spec:
             claimName: paperless-conf-pvc
       containers:
         - name: paperless
-          image: ghcr.io/paperless-ngx/paperless-ngx:2.4.2
+          image: ghcr.io/paperless-ngx/paperless-ngx:2.4.3
           volumeMounts:
             - name: conf
               mountPath: /config
