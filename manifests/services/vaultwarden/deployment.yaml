@@ -22,7 +22,7 @@ spec:
              claimName: vaultwarden-pvc
        containers:
         - name: vaultwarden
-          image: ghcr.io/dani-garcia/vaultwarden:1.30.3
+          image: ghcr.io/dani-garcia/vaultwarden:1.30.5
           volumeMounts:
             - mountPath: /data/
               name: vaultwarden
