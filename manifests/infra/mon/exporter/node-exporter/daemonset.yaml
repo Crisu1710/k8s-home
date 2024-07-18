@@ -29,7 +29,7 @@ spec:
               protocol: TCP
           securityContext:
             privileged: true
-          image: prom/node-exporter:v1.7.0
+          image: prom/node-exporter:v1.8.2
           args:
             - --path.procfs
             - /host/proc
