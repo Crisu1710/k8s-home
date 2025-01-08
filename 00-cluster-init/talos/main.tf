@@ -1,5 +1,5 @@
 terraform {
-  required_version = "1.10.3"
+  required_version = "1.10.4"
   required_providers {
     # see https://registry.terraform.io/providers/hashicorp/random
     random = {
