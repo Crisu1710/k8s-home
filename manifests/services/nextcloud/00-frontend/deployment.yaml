@@ -48,7 +48,7 @@ spec:
             claimName: nextcloud-data-pvc
       containers:
         - name: nextcloud
-          image: nextcloud:30.0.4
+          image: nextcloud:30.0.5
           volumeMounts:
             - name: vol
               mountPath: /var/www/html
