@@ -5,6 +5,7 @@
   "labels": ["renovatebot"],
   "packageRules": [
     {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
     }
   ],
