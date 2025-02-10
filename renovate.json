@@ -2,28 +2,43 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Renovate Dashboard",
-  "labels": ["renovatebot"],
+  "labels": [
+    "renovatebot"
+  ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "automerge": true
     }
   ],
   "kubernetes": {
-    "fileMatch": ["\\.yaml$"]
+    "fileMatch": [
+      "\\.yaml$"
+    ]
   },
   "extends": [
-    "config:base"
+    "config:recommended"
   ],
-  "regexManagers": [
+  "customManagers": [
     {
+      "customType": "regex",
       "fileMatch": "kustomization.yaml",
-      "matchStrings": ["https:\/\/github\\.com\/(?<depName>.*\/.*?)\/releases\/download\/(?<currentValue>.*?)\/"],
+      "matchStrings": [
+        "https://github\\.com/(?<depName>.*/.*?)/releases/download/(?<currentValue>.*?)/"
+      ],
       "datasourceTemplate": "github-releases"
     },
     {
+      "customType": "regex",
       "fileMatch": "kustomization.yaml",
-      "matchStrings": ["https:\/\/raw.githubusercontent.com\/(?<depName>[^\/]*\/[^\/]*)\/(?<currentValue>.*?)\/"], 
+      "matchStrings": [
+        "https://raw.githubusercontent.com/(?<depName>[^/]*/[^/]*)/(?<currentValue>.*?)/"
+      ],
       "datasourceTemplate": "github-tags"
     }
   ]
