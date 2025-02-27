@@ -18,7 +18,7 @@ spec:
       serviceAccountName: monitoring
       containers:
         - name: prometheus
-          image: quay.io/prometheus/prometheus:v3.2.0
+          image: quay.io/prometheus/prometheus:v3.2.1
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--web.enable-admin-api"
