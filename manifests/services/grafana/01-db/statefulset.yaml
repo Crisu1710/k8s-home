@@ -24,7 +24,7 @@ spec:
             claimName: grafana-db-backup
       containers:
         - name: postgres
-          image: postgres:17.4
+          image: postgres:17.5
 #          securityContext:
 #            runAsUser: 999
 #          args:
