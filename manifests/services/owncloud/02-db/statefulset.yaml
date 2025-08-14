@@ -24,7 +24,7 @@ spec:
             claimName: owncloud-db-backup
       containers:
         - name: postgres
-          image: postgres:17.5
+          image: postgres:17.6
 #          securityContext:
 #            runAsUser: 999
 #          args:
