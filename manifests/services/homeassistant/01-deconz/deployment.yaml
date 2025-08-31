@@ -30,7 +30,7 @@ spec:
         - name: deconz
           securityContext:
             privileged: true
-          image: ghcr.io/deconz-community/deconz-docker:2.31.0
+          image: ghcr.io/deconz-community/deconz-docker:2.31.1
           imagePullPolicy: Always
           volumeMounts:
             - name: vol
