@@ -25,7 +25,7 @@ spec:
         fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: pihole
-          image: pihole/pihole:2025.08.0
+          image: pihole/pihole:2025.10.0
           env:
             - name: WEB_PORT
               value: "8333"
