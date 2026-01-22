@@ -45,7 +45,7 @@ spec:
             claimName: nextcloud-db-backup-pvc
       containers:
         - name: mysql
-          image: mysql:9.5
+          image: mysql:9.6
           volumeMounts:
             - name: vol
               mountPath: /var/lib/mysql
