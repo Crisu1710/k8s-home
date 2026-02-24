@@ -22,7 +22,7 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: k3sw101
       containers:
-        - image: ghcr.io/coturn/coturn:4.8.0
+        - image: ghcr.io/coturn/coturn:4.9.0
           name: turn
           env:
             - name: DETECT_EXTERNAL_IP
