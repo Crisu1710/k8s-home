@@ -24,7 +24,7 @@ spec:
             claimName: matrix-db-backup-pvc
       containers:
         - name: postgres
-          image: postgres:18.7
+          image: postgres:19.0
 #          securityContext:
 #            runAsUser: 999
 #          args:
